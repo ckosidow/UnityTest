@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class CharacterController2D : MonoBehaviour
 {
-	[SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
+	[SerializeField] private float m_JumpForce = 1050f;							// Amount of force added when the player jumps.
 	[Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .001f;	// How much to smooth out the movement
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
@@ -80,8 +80,8 @@ public class CharacterController2D : MonoBehaviour
 			}
 		}
 
-		//only control the player if grounded or airControl is turned on
-		if (m_Grounded || (m_AirControl && !crouch))
+        //only control the player if grounded or airControl is turned on
+        if (m_Grounded || (m_AirControl && !crouch))
 		{
 
 			// If crouching
@@ -116,7 +116,7 @@ public class CharacterController2D : MonoBehaviour
 			}
 
             // Move the character by finding the target velocity
-            float targetXVelocity = (m_Grounded ? 1 : .6f) * move * 10f;
+            float targetXVelocity = (m_Grounded ? 1 : .75f) * move * 10f;
 
             if ((targetXVelocity < 0 && m_Rigidbody2D.velocity.x <= -maxSpeed) 
                 || (targetXVelocity > 0 && m_Rigidbody2D.velocity.x >= maxSpeed))
@@ -124,9 +124,9 @@ public class CharacterController2D : MonoBehaviour
                 targetXVelocity = 0;
             }
 
-            Vector3 targetVelocity = new Vector2(targetXVelocity, 0);
+            Vector2 targetVelocity = new Vector2(targetXVelocity, 0);
 			// And then smoothing it out and applying it to the character
-            if (m_Rigidbody2D.velocity.x <= maxSpeed && move != 0)
+            if (move != 0)
             {
                 m_Rigidbody2D.AddForce(Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing));
             }
@@ -144,14 +144,20 @@ public class CharacterController2D : MonoBehaviour
 				Flip();
 			}
 		}
-		// If the player should jump...
-		if (jump)
+
+        if (onSlope() && !m_Grounded)
+        {
+            // Stick to slope and don't slide
+        }
+
+        // If the player should jump...
+        if (jump)
 		{
 			// Add a vertical force to the player.
 			m_Grounded = false;
 
             // Instantly set a positive upward force if the player jumps
-            Vector3 jumpVelocity = m_Rigidbody2D.velocity;
+            Vector2 jumpVelocity = m_Rigidbody2D.velocity;
             jumpVelocity.y = 0;
             m_Rigidbody2D.velocity = jumpVelocity;
 
@@ -169,4 +175,23 @@ public class CharacterController2D : MonoBehaviour
 		theScale.x *= -1;
 		transform.localScale = theScale;
 	}
+
+    private bool onSlope()
+    {
+        RaycastHit2D[] hits = new RaycastHit2D[2];
+        int environmentMask = LayerMask.GetMask("Default");
+        int h = Physics2D.RaycastNonAlloc(transform.position, -Vector2.up, hits, 2f, environmentMask);
+
+        if (h > 0)
+        {
+            var angle = Mathf.Abs(Mathf.Atan2(hits[0].normal.x, hits[0].normal.y) * Mathf.Rad2Deg);
+
+            if (hits[0].normal != Vector2.up)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

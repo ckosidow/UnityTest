@@ -532,9 +532,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.083}
+  m_Offset: {x: 0, y: -0.082}
   serializedVersion: 2
-  m_Radius: 0.07525992
+  m_Radius: 0.07668521
 --- !u!61 &1572718517
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -609,7 +609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad834415c99b5a42941a7baaeb34e88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 1000
+  m_JumpForce: 1050
   m_CrouchSpeed: 0.4
   m_MovementSmoothing: 0.001
   m_AirControl: 1

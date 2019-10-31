@@ -47,25 +47,6 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    private bool onSlope()
-    {
-        RaycastHit2D[] hits = new RaycastHit2D[2];
-        int environmentMask = LayerMask.GetMask("Default");
-        int h = Physics2D.RaycastNonAlloc(transform.position, -Vector2.up, hits, 2f, environmentMask);
-
-        if (h > 0)
-        {
-            var angle = Mathf.Abs(Mathf.Atan2(hits[0].normal.x, hits[0].normal.y) * Mathf.Rad2Deg);
-
-            if (hits[0].normal != Vector2.up)
-            {
-                Debug.Log("On slope");
-            }
-        }
-
-        return false;
-    }
-
     public void OnLanding()
     {
         animator.SetBool("IsRising", false);
@@ -78,11 +59,6 @@ public class CharacterMovement : MonoBehaviour
     {
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
         jump = false;
-
-        if (onSlope())
-        {
-
-        }
 
         if (controller.m_Rigidbody2D.velocity.y < 0 && !controller.m_Grounded)
         {
